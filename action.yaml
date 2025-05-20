@@ -1,0 +1,65 @@
+name: "Secure Checkmarx One Scan"
+description: "Encapsulated CxOne scan with enforced project naming and branch rules"
+inputs:
+  cx_tenant:
+    required: true
+    default: ""
+    description: "Checkmarx One tenant"
+  base_uri:
+    required: true
+    default: ""
+    description: "Checkmarx One base URI"
+  cx_client_id:
+    required: true
+    default: ""
+    description: "Client ID for authentication"
+  cx_client_secret:
+    required: true
+    default: ""
+    description: "Client Secret for authentication"
+
+runs:
+  using: "composite"
+  steps:
+    # - name: Checkout
+    #   uses: actions/checkout@v4
+
+    - name: Derive Project and Branch
+      id: derive
+      shell: bash
+      run: |
+        REPO_NAME="${GITHUB_REPOSITORY##*/}"
+        PROJECT_NAME="AppSec/$REPO_NAME"
+
+        if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+          BRANCH="${GITHUB_HEAD_REF}"
+        else
+          BRANCH="${GITHUB_REF#refs/heads/}"
+        fi
+
+        echo "project_name=$PROJECT_NAME" >> "$GITHUB_OUTPUT"
+        echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+    - name: Print details
+      shell: bash
+      run: |
+        echo $project_name
+        echo $branch
+      env:
+        project_name: ${{ steps.derive.outputs.project_name }}
+        branch: ${{ steps.derive.outputs.branch }}
+
+    - name: Checkmarx One Scan
+      uses: checkmarx/ast-github-action@main
+      with:
+        project_name: ${{ steps.derive.outputs.project_name }}
+        branch: ${{ steps.derive.outputs.branch }}
+        cx_tenant: ${{ inputs.CX_TENANT }}
+        base_uri: ${{ inputs.BASE_URI }}
+        cx_client_id: ${{ inputs.CX_CLIENT_ID }}
+        cx_client_secret: ${{ inputs.CX_CLIENT_SECRET }}
+        additional_params: --report-format sarif --output-path .
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        # Path to SARIF file relative to the root of the repository
+        sarif_file: cx_result.sarif
