@@ -47,8 +47,11 @@ runs:
       env:
         project_name: ${{ steps.derive.outputs.project_name }}
         branch: ${{ steps.derive.outputs.branch }}
+        
     - name: Pull request number
+      shell: bash
       run: echo ${{ github.event.pull_request.number }}
+      
     - name: Checkmarx One Scan
       uses: checkmarx/ast-github-action@main
       with:
