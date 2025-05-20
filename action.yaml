@@ -61,7 +61,7 @@ runs:
         base_uri: ${{ inputs.BASE_URI }}
         cx_client_id: ${{ inputs.CX_CLIENT_ID }}
         cx_client_secret: ${{ inputs.CX_CLIENT_SECRET }}
-        additional_params: --pr-number ${{ github.event.pull_request.number }} --report-format sarif --output-path .
+        additional_params: --report-format sarif --output-path .
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v3
       with:
