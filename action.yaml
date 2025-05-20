@@ -47,7 +47,8 @@ runs:
       env:
         project_name: ${{ steps.derive.outputs.project_name }}
         branch: ${{ steps.derive.outputs.branch }}
-
+    - name: Pull request number
+      run: echo ${{ github.event.pull_request.number }}
     - name: Checkmarx One Scan
       uses: checkmarx/ast-github-action@main
       with:
@@ -57,7 +58,7 @@ runs:
         base_uri: ${{ inputs.BASE_URI }}
         cx_client_id: ${{ inputs.CX_CLIENT_ID }}
         cx_client_secret: ${{ inputs.CX_CLIENT_SECRET }}
-        additional_params: --report-format sarif --output-path .
+        additional_params: --pr-id ${{ github.event.pull_request.number }} --report-format sarif --output-path .
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v3
       with:
