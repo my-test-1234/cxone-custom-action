@@ -25,22 +25,22 @@ runs:
     #   uses: actions/checkout@v4
 
     - name: Derive Project and Branch
-    id: derive
-    shell: bash
-    run: |
-      REPO_NAME="${GITHUB_REPOSITORY##*/}"
-      PROJECT_NAME="AppSec/$REPO_NAME"
-  
-      if [[ "${GITHUB_EVENT_NAME}" == "repository_dispatch" ]]; then
-        BRANCH="${{ github.event.client_payload.branch }}"
-      elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-        BRANCH="${GITHUB_HEAD_REF}"
-      else
-        BRANCH="${GITHUB_REF#refs/heads/}"
-      fi
-  
-      echo "project_name=$PROJECT_NAME" >> "$GITHUB_OUTPUT"
-      echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+      id: derive
+      shell: bash
+      run: |
+        REPO_NAME="${GITHUB_REPOSITORY##*/}"
+        PROJECT_NAME="AppSec/$REPO_NAME"
+    
+        if [[ "${GITHUB_EVENT_NAME}" == "repository_dispatch" ]]; then
+          BRANCH="${{ github.event.client_payload.branch }}"
+        elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+          BRANCH="${GITHUB_HEAD_REF}"
+        else
+          BRANCH="${GITHUB_REF#refs/heads/}"
+        fi
+    
+        echo "project_name=$PROJECT_NAME" >> "$GITHUB_OUTPUT"
+        echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
 
     - name: Print details
       shell: bash
