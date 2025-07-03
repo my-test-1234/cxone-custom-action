@@ -62,8 +62,8 @@ runs:
         cx_client_id: ${{ inputs.CX_CLIENT_ID }}
         cx_client_secret: ${{ inputs.CX_CLIENT_SECRET }}
         additional_params: --threshold "sast-critical>=1; sca-critical>=1; iac-security-critical>=1; iac-security-critical>=1" --report-format sarif --output-path .
-    # - name: Upload SARIF file
-    #   uses: github/codeql-action/upload-sarif@v3
-    #   with:
-    #     # Path to SARIF file relative to the root of the repository
-    #     sarif_file: cx_result.sarif
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        # Path to SARIF file relative to the root of the repository
+        sarif_file: cx_result.sarif
